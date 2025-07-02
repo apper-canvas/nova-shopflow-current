@@ -39,7 +39,10 @@ export default {
           '0%, 20%, 53%, 80%, 100%': { transform: 'scale(1)' },
           '40%, 43%': { transform: 'scale(1.1)' },
           '70%': { transform: 'scale(1.05)' },
-        },
+},
+      },
+      scale: {
+        '102': '1.02',
       },
     },
   },

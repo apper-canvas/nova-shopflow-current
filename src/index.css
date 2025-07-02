@@ -119,8 +119,3 @@
 .animate-bounce-soft {
   animation: bounceSoft 0.6s ease-out;
 }
-
-/* Scale Transform Utilities */
-.scale-102 {
-  transform: scale(1.02);
-}
