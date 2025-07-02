@@ -1,0 +1,60 @@
+{
+  "categories": [
+    {
+      "Id": 1,
+      "name": "Electronics",
+      "description": "Latest gadgets and electronic devices",
+      "count": 6,
+      "icon": "Smartphone"
+    },
+    {
+      "Id": 2,
+      "name": "Accessories",
+      "description": "Fashion accessories and personal items",
+      "count": 4,
+      "icon": "Watch"
+    },
+    {
+      "Id": 3,
+      "name": "Clothing",
+      "description": "Fashion and apparel for everyone",
+      "count": 1,
+      "icon": "Shirt"
+    },
+    {
+      "Id": 4,
+      "name": "Home & Garden",
+      "description": "Everything for your home and garden",
+      "count": 4,
+      "icon": "Home"
+    },
+    {
+      "Id": 5,
+      "name": "Sports",
+      "description": "Sports and fitness equipment",
+      "count": 2,
+      "icon": "Dumbbell"
+    },
+    {
+      "Id": 6,
+      "name": "Food & Beverage",
+      "description": "Gourmet food and beverages",
+      "count": 1,
+      "icon": "Coffee"
+    },
+    {
+      "Id": 7,
+      "name": "Books",
+      "description": "Books and educational materials",
+      "count": 1,
+      "icon": "Book"
+    },
+    {
+      "Id": 8,
+      "name": "Shoes",
+      "description": "Footwear for all occasions",
+      "count": 1,
+      "icon": "ShoppingBag"
+    }
+  ]
+}
