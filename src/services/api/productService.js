@@ -1,43 +1,407 @@
-import { products } from '@/services/mockData/products.json'
-
-// Simulate network delay
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
-
+// Product Service with ApperClient Integration
 export const getProducts = async () => {
-  await delay(300)
-  return [...products]
+  try {
+    const { ApperClient } = window.ApperSDK
+    const apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    })
+    
+    const params = {
+      fields: [
+        { field: { Name: "Name" } },
+        { field: { Name: "description" } },
+        { field: { Name: "price" } },
+        { field: { Name: "sale_price" } },
+        { field: { Name: "image" } },
+        { field: { Name: "images" } },
+        { field: { Name: "in_stock" } },
+        { field: { Name: "rating" } },
+        { field: { Name: "reviews" } },
+        { field: { Name: "featured" } },
+        { field: { Name: "features" } },
+        { field: { Name: "Tags" } },
+        { 
+          field: { name: "category" },
+          referenceField: { field: { Name: "Name" } }
+        }
+      ],
+      orderBy: [
+        { fieldName: "Name", sorttype: "ASC" }
+      ]
+    }
+    
+    const response = await apperClient.fetchRecords('product', params)
+    
+    if (!response.success) {
+      console.error(response.message)
+      throw new Error(response.message)
+    }
+    
+    // Transform response data to match existing structure
+    const transformedData = (response.data || []).map(product => ({
+      ...product,
+      name: product.Name,
+      salePrice: product.sale_price,
+      inStock: product.in_stock,
+      category: product.category?.Name || product.category
+    }))
+    
+    return transformedData
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      console.error("Error fetching products:", error?.response?.data?.message)
+      throw new Error(error.response.data.message)
+    } else {
+      console.error("Error fetching products:", error.message)
+      throw new Error(error.message)
+    }
+  }
 }
 
 export const getProductById = async (id) => {
-  await delay(200)
-  const product = products.find(p => p.Id === id)
-  if (!product) {
-    throw new Error('Product not found')
+  try {
+    const { ApperClient } = window.ApperSDK
+    const apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    })
+    
+    const params = {
+      fields: [
+        { field: { Name: "Name" } },
+        { field: { Name: "description" } },
+        { field: { Name: "price" } },
+        { field: { Name: "sale_price" } },
+        { field: { Name: "image" } },
+        { field: { Name: "images" } },
+        { field: { Name: "in_stock" } },
+        { field: { Name: "rating" } },
+        { field: { Name: "reviews" } },
+        { field: { Name: "featured" } },
+        { field: { Name: "features" } },
+        { field: { Name: "Tags" } },
+        { 
+          field: { name: "category" },
+          referenceField: { field: { Name: "Name" } }
+        }
+      ]
+    }
+    
+    const response = await apperClient.getRecordById('product', id, params)
+    
+    if (!response || !response.data) {
+      throw new Error('Product not found')
+    }
+    
+    // Transform response data to match existing structure
+    const product = response.data
+    return {
+      ...product,
+      name: product.Name,
+      salePrice: product.sale_price,
+      inStock: product.in_stock,
+      category: product.category?.Name || product.category
+    }
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      console.error(`Error fetching product with ID ${id}:`, error?.response?.data?.message)
+      throw new Error(error.response.data.message)
+    } else {
+      console.error(`Error fetching product with ID ${id}:`, error.message)
+      throw new Error(error.message)
+    }
   }
-  return { ...product }
 }
 
-export const getProductsByCategory = async (category) => {
-  await delay(250)
-  return products.filter(p => p.category === category).map(p => ({ ...p }))
+export const getProductsByCategory = async (categoryName) => {
+  try {
+    const { ApperClient } = window.ApperSDK
+    const apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    })
+    
+    const params = {
+      fields: [
+        { field: { Name: "Name" } },
+        { field: { Name: "description" } },
+        { field: { Name: "price" } },
+        { field: { Name: "sale_price" } },
+        { field: { Name: "image" } },
+        { field: { Name: "images" } },
+        { field: { Name: "in_stock" } },
+        { field: { Name: "rating" } },
+        { field: { Name: "reviews" } },
+        { field: { Name: "featured" } },
+        { field: { Name: "features" } },
+        { field: { Name: "Tags" } },
+        { 
+          field: { name: "category" },
+          referenceField: { field: { Name: "Name" } }
+        }
+      ],
+      whereGroups: [
+        {
+          operator: "AND",
+          subGroups: [
+            {
+              conditions: [
+                {
+                  fieldName: "category",
+                  operator: "Contains",
+                  values: [categoryName]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    
+    const response = await apperClient.fetchRecords('product', params)
+    
+    if (!response.success) {
+      console.error(response.message)
+      throw new Error(response.message)
+    }
+    
+    // Transform response data to match existing structure
+    const transformedData = (response.data || []).map(product => ({
+      ...product,
+      name: product.Name,
+      salePrice: product.sale_price,
+      inStock: product.in_stock,
+      category: product.category?.Name || product.category
+    }))
+    
+    return transformedData
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      console.error("Error fetching products by category:", error?.response?.data?.message)
+      throw new Error(error.response.data.message)
+    } else {
+      console.error("Error fetching products by category:", error.message)
+      throw new Error(error.message)
+    }
+  }
 }
 
 export const searchProducts = async (query) => {
-  await delay(300)
-  const searchTerm = query.toLowerCase()
-  return products.filter(p => 
-    p.name.toLowerCase().includes(searchTerm) ||
-    p.description.toLowerCase().includes(searchTerm) ||
-    p.category.toLowerCase().includes(searchTerm)
-  ).map(p => ({ ...p }))
+  try {
+    const { ApperClient } = window.ApperSDK
+    const apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    })
+    
+    const params = {
+      fields: [
+        { field: { Name: "Name" } },
+        { field: { Name: "description" } },
+        { field: { Name: "price" } },
+        { field: { Name: "sale_price" } },
+        { field: { Name: "image" } },
+        { field: { Name: "images" } },
+        { field: { Name: "in_stock" } },
+        { field: { Name: "rating" } },
+        { field: { Name: "reviews" } },
+        { field: { Name: "featured" } },
+        { field: { Name: "features" } },
+        { field: { Name: "Tags" } },
+        { 
+          field: { name: "category" },
+          referenceField: { field: { Name: "Name" } }
+        }
+      ],
+      whereGroups: [
+        {
+          operator: "OR",
+          subGroups: [
+            {
+              conditions: [
+                {
+                  fieldName: "Name",
+                  operator: "Contains",
+                  values: [query]
+                }
+              ]
+            },
+            {
+              conditions: [
+                {
+                  fieldName: "description",
+                  operator: "Contains",
+                  values: [query]
+                }
+              ]
+            },
+            {
+              conditions: [
+                {
+                  fieldName: "Tags",
+                  operator: "Contains",
+                  values: [query]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+    
+    const response = await apperClient.fetchRecords('product', params)
+    
+    if (!response.success) {
+      console.error(response.message)
+      throw new Error(response.message)
+    }
+    
+    // Transform response data to match existing structure
+    const transformedData = (response.data || []).map(product => ({
+      ...product,
+      name: product.Name,
+      salePrice: product.sale_price,
+      inStock: product.in_stock,
+      category: product.category?.Name || product.category
+    }))
+    
+    return transformedData
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      console.error("Error searching products:", error?.response?.data?.message)
+      throw new Error(error.response.data.message)
+    } else {
+      console.error("Error searching products:", error.message)
+      throw new Error(error.message)
+    }
+  }
 }
 
 export const getFeaturedProducts = async () => {
-  await delay(250)
-  return products.filter(p => p.featured).map(p => ({ ...p }))
+  try {
+    const { ApperClient } = window.ApperSDK
+    const apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    })
+    
+    const params = {
+      fields: [
+        { field: { Name: "Name" } },
+        { field: { Name: "description" } },
+        { field: { Name: "price" } },
+        { field: { Name: "sale_price" } },
+        { field: { Name: "image" } },
+        { field: { Name: "images" } },
+        { field: { Name: "in_stock" } },
+        { field: { Name: "rating" } },
+        { field: { Name: "reviews" } },
+        { field: { Name: "featured" } },
+        { field: { Name: "features" } },
+        { field: { Name: "Tags" } },
+        { 
+          field: { name: "category" },
+          referenceField: { field: { Name: "Name" } }
+        }
+      ],
+      where: [
+        {
+          FieldName: "featured",
+          Operator: "EqualTo",
+          Values: [true]
+        }
+      ]
+    }
+    
+    const response = await apperClient.fetchRecords('product', params)
+    
+    if (!response.success) {
+      console.error(response.message)
+      throw new Error(response.message)
+    }
+    
+    // Transform response data to match existing structure
+    const transformedData = (response.data || []).map(product => ({
+      ...product,
+      name: product.Name,
+      salePrice: product.sale_price,
+      inStock: product.in_stock,
+      category: product.category?.Name || product.category
+    }))
+    
+    return transformedData
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      console.error("Error fetching featured products:", error?.response?.data?.message)
+      throw new Error(error.response.data.message)
+    } else {
+      console.error("Error fetching featured products:", error.message)
+      throw new Error(error.message)
+    }
+  }
 }
 
 export const getOnSaleProducts = async () => {
-  await delay(250)
-  return products.filter(p => p.salePrice).map(p => ({ ...p }))
+  try {
+    const { ApperClient } = window.ApperSDK
+    const apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    })
+    
+    const params = {
+      fields: [
+        { field: { Name: "Name" } },
+        { field: { Name: "description" } },
+        { field: { Name: "price" } },
+        { field: { Name: "sale_price" } },
+        { field: { Name: "image" } },
+        { field: { Name: "images" } },
+        { field: { Name: "in_stock" } },
+        { field: { Name: "rating" } },
+        { field: { Name: "reviews" } },
+        { field: { Name: "featured" } },
+        { field: { Name: "features" } },
+        { field: { Name: "Tags" } },
+        { 
+          field: { name: "category" },
+          referenceField: { field: { Name: "Name" } }
+        }
+      ],
+      where: [
+        {
+          FieldName: "sale_price",
+          Operator: "HasValue",
+          Values: []
+        }
+      ]
+    }
+    
+    const response = await apperClient.fetchRecords('product', params)
+    
+    if (!response.success) {
+      console.error(response.message)
+      throw new Error(response.message)
+    }
+    
+    // Transform response data to match existing structure
+    const transformedData = (response.data || []).map(product => ({
+      ...product,
+      name: product.Name,
+      salePrice: product.sale_price,
+      inStock: product.in_stock,
+      category: product.category?.Name || product.category
+    }))
+    
+    return transformedData
+  } catch (error) {
+    if (error?.response?.data?.message) {
+      console.error("Error fetching sale products:", error?.response?.data?.message)
+      throw new Error(error.response.data.message)
+    } else {
+      console.error("Error fetching sale products:", error.message)
+      throw new Error(error.message)
+    }
+  }
 }

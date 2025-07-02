@@ -1,16 +1,20 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import ApperIcon from '@/components/ApperIcon'
-import SearchBar from '@/components/molecules/SearchBar'
-import Button from '@/components/atoms/Button'
-import { useCart } from '@/hooks/useCart'
+import React, { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import { AuthContext } from "@/App";
+import { useCart } from "@/hooks/useCart";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import SearchBar from "@/components/molecules/SearchBar";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { cart } = useCart()
   const navigate = useNavigate()
+  const { logout } = useContext(AuthContext)
+  const { user } = useSelector((state) => state.user)
 
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0)
 
@@ -59,7 +63,7 @@ const Header = () => {
             <SearchBar onSearch={handleSearch} />
           </div>
 
-          {/* Right Actions */}
+{/* Right Actions */}
           <div className="flex items-center space-x-4">
             {/* Mobile Search Toggle */}
             <Button
@@ -86,6 +90,22 @@ const Header = () => {
                 )}
               </Button>
             </Link>
+
+            {/* User Menu */}
+            <div className="hidden md:flex items-center space-x-2">
+              <span className="text-sm text-gray-600">
+                Hi, {user?.firstName || 'User'}
+              </span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={logout}
+                className="text-error hover:text-error hover:bg-error/5"
+              >
+                <ApperIcon name="LogOut" className="w-4 h-4 mr-1" />
+                Logout
+              </Button>
+            </div>
 
             {/* Mobile Menu Toggle */}
             <Button
@@ -116,7 +136,7 @@ const Header = () => {
         {/* Mobile Menu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
-            <motion.nav
+<motion.nav
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
@@ -134,6 +154,26 @@ const Header = () => {
                     <span>{item.name}</span>
                   </Link>
                 ))}
+                <div className="border-t border-gray-200 pt-4">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <ApperIcon name="User" className="w-4 h-4 text-gray-500" />
+                    <span className="text-sm text-gray-600">
+                      {user?.firstName || 'User'}
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setIsMobileMenuOpen(false)
+                      logout()
+                    }}
+                    className="text-error hover:text-error hover:bg-error/5 w-full justify-start"
+                  >
+                    <ApperIcon name="LogOut" className="w-4 h-4 mr-2" />
+                    Logout
+                  </Button>
+                </div>
               </div>
             </motion.nav>
           )}
