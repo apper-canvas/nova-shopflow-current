@@ -38,9 +38,8 @@
   .card {
     @apply bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100;
   }
-
-  .product-card {
-    @apply card overflow-hidden group cursor-pointer transform transition-all duration-300 hover:scale-102 hover:shadow-xl;
+.product-card {
+    @apply card overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-102 hover:shadow-xl;
   }
 
   .input-field {
